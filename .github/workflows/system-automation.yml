@@ -1,0 +1,52 @@
+name: System Automation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  linux-automation:
+    runs-on: ubuntu-latest
+    env:
+      LINUX_DEMO_VAR: "Valor desde workflow Linux"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dar permisos de ejecución al script
+        run: chmod +x scripts/linux-system-task.sh
+
+      - name: Ejecutar script de Linux
+        run: ./scripts/linux-system-task.sh
+
+      - name: Listar archivos generados
+        run: ls -l linux-output
+
+      - name: Subir artifacts de Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-system-output
+          path: linux-output/
+
+  windows-automation:
+    runs-on: windows-latest
+    env:
+      WIN_DEMO_VAR: "Valor desde workflow Windows"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ejecutar script de Windows
+        shell: pwsh
+        run: ./scripts/windows-system-task.ps1
+
+      - name: Listar archivos generados
+        shell: pwsh
+        run: Get-ChildItem -Path windows-output | Format-List
+
+      - name: Subir artifacts de Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-system-output
+          path: windows-output/
