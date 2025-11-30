@@ -1,0 +1,24 @@
+name: Docker Container Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t demo-image .
+
+      - name: Run container
+        run: docker run -e DEMO_VAR="Hola desde GitHub Actions" demo-image
+
+      - name: Show container stats (CPU/Mem)
+        run: docker stats --no-stream
+
+      - name: Show container logs
+        run: docker logs $(docker ps -lq)
