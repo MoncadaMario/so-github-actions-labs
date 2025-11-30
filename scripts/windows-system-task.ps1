@@ -18,7 +18,7 @@ New-Item -ItemType Directory -Path $workDir -Force | Out-Null
 
 # 4. Cambiar permisos con icacls (dar permiso de lectura/escritura al usuario actual)
 $user = "$env:USERNAME"
-icacls "$workDir\info.txt" /grant "$user:(R,W)" | Out-Null
+icacls "$workDir\info.txt" /grant "${user}:(R,W)" | Out-Null
 
 # 5. Crear proceso en segundo plano
 Start-Job -ScriptBlock {
