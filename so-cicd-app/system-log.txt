@@ -1,0 +1,5 @@
+=== System Log ===
+NODE_ENV: not set
+PLATFORM: win32
+TIMESTAMP: 2025-12-06T17:14:54.310Z
+Log: aplicación final CI/CD ejecutó este script.
