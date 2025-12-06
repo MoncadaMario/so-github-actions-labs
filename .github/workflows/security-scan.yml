@@ -1,0 +1,65 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    name: Dependency Audit (npm audit)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        working-directory: ./so-cicd-app
+        run: npm ci
+
+      - name: Run npm audit (report only)
+        working-directory: ./so-cicd-app
+        run: npm audit --audit-level=moderate || true
+
+  file-permissions-check:
+    runs-on: ubuntu-latest
+    name: File Permissions Check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: List important files with permissions
+        run: |
+          ls -l
+          ls -l so-cicd-app || true
+          ls -l scripts || true
+
+  vulnerability-report:
+    runs-on: ubuntu-latest
+    needs: [dependency-audit]
+    name: Vulnerability Report
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate simple report
+        run: |
+          echo "Reporte básico de vulnerabilidades" > security-report.txt
+          echo "Herramienta: npm audit" >> security-report.txt
+          echo "Fecha: $(date -Iseconds)" >> security-report.txt
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.txt
